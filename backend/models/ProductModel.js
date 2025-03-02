@@ -11,7 +11,8 @@ const Product = db.define('products',{
     },
     code: {
         type: DataTypes.STRING,
-        allowNull: false  // Menentukan kolom code tidak boleh kosong
+        allowNull: false,  // Menentukan kolom code tidak boleh kosong
+        // autoIncrement: true 
     },
     name: {
         type: DataTypes.STRING,
@@ -21,19 +22,20 @@ const Product = db.define('products',{
         type: DataTypes.DECIMAL(10, 2),  // Menentukan presisi untuk harga
         allowNull: false
     },
-    isReady: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true  // Menambahkan default value untuk isReady
+    stock: {
+        type: DataTypes.INTEGER,
+        allowNull: true  // Menambahkan default value untuk isReady
     },
     image: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false // Menentukan kolom image tidak boleh kosong
     },
-    categoryId: {
+    categoryCode: {
         type: DataTypes.INTEGER,
         allowNull: false,  // Pastikan categoryId tidak boleh kosong
         references: {
             model: 'categories', // Nama tabel yang direferensikan
-            key: 'id',
+            key: 'code'          // Kolom yang direferensikan,
         }
     },
     createdAt: {

@@ -1,144 +1,145 @@
-import Cart from "../models/CartModel.js";
+// import path from 'path';
+// import fs from 'fs';
 
-// export const addCart = async (req, res) => {
-//     try {
-//         const { qty, price, name, totalPrice, note, productId, createdAt, updatedAt} = req.body;
-//         console.log('Received productId:', productId);
-//         console.log('Data Diterima di Backend:', {
-//             qty,
-//             price,
-//             name,
-//             totalPrice,
-//             note,
-//             productId,
-//             createdAt,
-//             updatedAt
-//         });
-//         const currentTime = new Date();
+// const cartsFilePath = path.resolve('backend/carts.json');
 
-//         const newProduct = await Cart.create({
-//             qty,
-//             price,
-//             name,
-//             totalPrice,
-//             note,
-//             productId,
-//             createdAt: currentTime,
-//             updatedAt: currentTime,
-//         });
 
-//         res.status(201).json({ msg: "Produk Berhasil Ditambahkan", data: newProduct });
-//     } catch (error) {
-//         console.error('🔥 Kesalahan Backend:', error.message);
-//         res.status(500).json({ msg: "Kesalahan Server Internal", error: error.message });
-//     }
+// // FUNGSI UNTUK MELIHAT DATA CART
+// export const getCart = (req, res) => {
+//     const productId = req.query.productId;
+
+//     fs.readFile(cartsFilePath, 'utf8', (err, data) => {
+//         if (err) {
+//             return res.status(500).json({ message: 'Error reading cart data' });
+//         }
+//         const carts = JSON.parse(data);
+//         const productCart = carts.find(cart => cart.productId == productId);
+
+//         if (!productCart) {
+//             return res.status(404).json({ message: 'Product not found in cart' });
+//         }
+
+//         res.status(200).json(productCart);
+//     });
 // };
 
-export const addCart = async (req, res) => {
-    try {
-        const { productId } = req.body;
 
-        // Cek apakah produk sudah ada di cart
-        const existingCartItem = await Cart.findOne({ where: { productId } });
-        console.log("🛠️ addCart - productId:", productId);
+// // FUNGSI UNTUK MENAMBAHKAN DATA KE DALAM CART
+// export const addCart = (req, res) => {
+//     fs.readFile(cartsFilePath, 'utf8', (err, data) => {
+//         if (err) {
+//             return res.status(500).json({ message: 'Error reading cart data' });
+//         }
+
+//         const carts = JSON.parse(data);
+//         const newCartItem = req.body;
+
+//         // Cek apakah produk sudah ada di cart
+//         const existingItem = carts.find(item => item.productId == newCartItem.productId);
+
+//         if (existingItem) {
+//             // Kalau sudah ada, update qty dan totalPrice
+//             existingItem.qty += newCartItem.qty;
+//             existingItem.totalPrice = existingItem.price * existingItem.qty;
+//         } else {
+//             // Kalau belum ada, tambahkan produk baru
+//             carts.push(newCartItem);
+//         }
+
+//         // Simpan perubahan ke carts.json
+//         fs.writeFile(cartsFilePath, JSON.stringify(carts, null, 2), (err) => {
+//             if (err) {
+//                 return res.status(500).json({ message: 'Error writing cart data' });
+//             }
+
+//             res.status(200).json(newCartItem);
+//         });
+//     });
+// };
+
+
+// // FUNGSI UNTUK MENGHAPUS DATA CART
+// export const deleteCart = (req, res) => {
+//     fs.writeFile(cartsFilePath, JSON.stringify([], null, 2), (err) => {
+//         if (err) {
+//         return res.status(500).json({ message: 'Error clearing cart' });
+//         }
+//         res.status(200).json({ message: 'Cart cleared successfully' });
+//     });
+// };
+import fs from 'fs';
+import path from 'path';
+
+// const cartsFilePath = path.join('backend','carts.json');
+const cartsFilePath = 'C:/Users/user/Desktop/Point_Of_Sale_System/backend/carts.json';
+console.log('Cek path:', cartsFilePath);
+
+// Fungsi untuk membaca data dari carts.json
+const readCartsFromFile = () => {
+    try {
+        const data = fs.readFileSync(cartsFilePath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading cart data:', error);
+        console.log('Mencoba baca file di:', filePath);
+        return [];
+    }
+};
+
+// Fungsi untuk menulis data ke carts.json
+const writeCartsToFile = (carts) => {
+    try {
+        fs.writeFileSync(cartsFilePath, JSON.stringify(carts, null, 2));
+    } catch (error) {
+        console.error('Error writing cart data:', error);
+    }
+};
+
+// Get Cart
+export const getCart = (req, res) => {
+    try {
+        const productId = parseInt(req.query.productId);
+        const carts = readCartsFromFile();
+        const cartItem = carts.find(item => item.productId === productId);
+
+        if (!cartItem) {
+            return res.status(404).json({ message: 'Product not found in cart' });
+        }
+
+        res.status(200).json(cartItem);
+    } catch (error) {
+        res.status(500).json({ message: 'Error reading cart data' });
+    }
+};
+
+// Add to Cart
+export const addCart = (req, res) => {
+    try {
+        const { productId, name, price, qty } = req.body;
+        let carts = readCartsFromFile();
+        const existingCartItem = carts.find(item => item.productId === productId);
+
         if (existingCartItem) {
-            // Jika produk sudah ada, update qty dan totalPrice
-            existingCartItem.qty += 1;
-            existingCartItem.totalPrice = existingCartItem.qty * existingCartItem.price;
-            await existingCartItem.save();
-
-            return res.status(200).json({ msg: "Qty produk ditambahkan", data: existingCartItem });
+            existingCartItem.qty += qty;
+            existingCartItem.totalPrice = existingCartItem.qty * price;
+        } else {
+            const newCartItem = { productId, name, price, qty, totalPrice: price * qty };
+            carts.push(newCartItem);
         }
 
-        // Jika produk belum ada, buat item baru di cart
-        const newProduct = await Cart.create({
-            ...req.body,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        });
-
-        res.status(201).json({ msg: "Produk berhasil ditambahkan ke cart", data: newProduct });
+        writeCartsToFile(carts);
+        res.status(200).json({ message: 'Product added to cart successfully' });
     } catch (error) {
-        console.error('🔥 Kesalahan Backend:', error.message);
-        res.status(500).json({ msg: "Kesalahan Server Internal", error: error.message });
+        res.status(500).json({ message: 'Error adding to cart' });
     }
 };
 
-
-
-// // FUNGSI UNTUK MENGAMBIL DATA CART
-// export const getCart = async (req, res) => {
-//     try {
-//     const carts = await Cart.findAll();
-
-//     res.status(200).json(carts);
-//     } catch (error) {
-//     console.error(error.message);
-//     res.status(500).json({ msg: "Internal server error" });
-//     }
-// };
-
-export const getCart = async (req, res) => {
+// Clear Cart
+export const deleteCart = (req, res) => {
     try {
-        const { productId } = req.query; // Ambil productId dari query
-
-        if (productId) {
-            // Jika ada productId di query, filter berdasarkan itu
-            const cart = await Cart.findAll({
-                where: {
-                    productId: productId
-                }
-            });
-            console.log("🛠️ Filtered Cart by productId:", cart);
-            return res.status(200).json(cart);
-        }
-
-        // Jika tidak ada productId, ambil semua data cart
-        const carts = await Cart.findAll();
-        console.log("🛠️ All Cart Data:", carts);
-        res.status(200).json(carts);
+        writeCartsToFile([]);  // Clear all items
+        res.status(200).json({ message: 'Cart cleared successfully' });
     } catch (error) {
-        console.error('🔥 Error getCart:', error.message);
-        res.status(500).json({ msg: "Internal server error" });
-    }
-};
-
-
-
-// FUNGSI UNTUK MEMPERBARUI DATA CART
-export const updateCart = async (req, res) => {
-    try {
-      // Cek apakah data cart dengan ID yang diberikan ada
-    const cart = await Cart.findByPk(req.params.id);
-    if (!cart) {
-        return res.status(404).json({ msg: "Cart not found" });
-    }
-
-      // Update data cart
-    await Cart.update(req.body, {
-        where: {
-        id: req.params.id,
-        },
-    });
-
-    res.status(200).json({ msg: "Cart updated successfully" });
-    } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ msg: "Internal server error" });
-    }
-};
-
-
-// untuk menghapus data cart
-export const deleteCart = async(req, res) =>{
-    try{
-        await Cart.destroy({
-            where:{
-                id: req.params.id
-            }
-        })
-        res.status(200).json({msg: "Cart deleted"});
-    }catch (error) {
-        console.log(error.message);        
+        res.status(500).json({ message: 'Error clearing cart' });
     }
 };

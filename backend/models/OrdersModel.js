@@ -1,5 +1,4 @@
 import { Sequelize } from "sequelize";
-import mongoose from "mongoose"; 
 import db from "../config/Database.js";
 
 const { DataTypes } = Sequelize;
@@ -11,14 +10,26 @@ const Orders = db.define('ordereds', {
         autoIncrement: true,
     },
     date: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    product: {
+        type: DataTypes.JSON, // Menyimpan data detail dalam bentuk JSON
+        allowNull: false,
+    },
+    price: {
+        type: DataTypes.INTEGER, // Menyimpan data detail dalam bentuk JSON
         allowNull: false,
     },
     total: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    details: {
+    quantity: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    note: {
         type: DataTypes.JSON, // Menyimpan data detail dalam bentuk JSON
         allowNull: false,
     },

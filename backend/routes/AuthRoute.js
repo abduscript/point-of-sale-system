@@ -2,10 +2,14 @@ import express from 'express';
 import {
     signUp,
     loginUser,
-    // getUserData
+    forgotPassword,
+    getUserData
 } from '../controllers/UsersController.js';
 
 const router = express.Router();
+
+// ROUTE UNTUK MENDAPATKAN DATA USER
+router.get('/auth', getUserData);
 
 // ROUTE UNTUK SIGN UP
 router.post('/signup', signUp, (req, res) => {
@@ -16,7 +20,11 @@ router.post('/signup', signUp, (req, res) => {
 // ROUTE UNTUK LOGIN
 router.post('/login', loginUser);
 
-// // ROUTE UNTUK MENGAMBIL DATA USER YANG LOGIN
-// router.get('/api/users/me', getUserData);
+// ROUTE UNTUK LUPA PASSWORD
+router.post('/forgot-password', forgotPassword);
+
+// ROUTE UNTUK RESET PASSWORD
+router.post('/reset-password', forgotPassword);
+
 
 export default router;  // Export router agar bisa digunakan di file lain

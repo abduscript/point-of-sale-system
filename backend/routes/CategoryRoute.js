@@ -1,5 +1,9 @@
 import express from 'express';
-import { addCategory, getCategories, getCategoryById } from '../controllers/CategoryController.js';
+import { addCategory, 
+        getCategories, 
+        getCategoryByCode,
+        // deleteCategory 
+} from '../controllers/CategoryController.js';
 
 const router = express.Router();
 // MENAMBAH KATEGORI
@@ -9,6 +13,8 @@ router.post('/categories', addCategory);
 router.get('/categories', getCategories);
 
 // MENGAMBIL DATA KATEGORI SESUAI ID
-router.get('/categories/:id', getCategoryById)
+router.get('/categories/:code', getCategoryByCode)
 
+// MENGHAPUS DATA KATEGORI SESUAI CODE
+// router.delete('/categories/:code', deleteCategory)
 export default router;

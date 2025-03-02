@@ -4,8 +4,8 @@ import db from "../config/Database.js";
 const {DataTypes} = Sequelize;
 
 const Category = db.define('categories',{
-    id: {
-        type: DataTypes.INTEGER,  // Menggunakan INTEGER untuk id
+    code: {
+        type: DataTypes.STRING,  // Menggunakan INTEGER untuk id
         primaryKey: true,         // Menentukan id sebagai primary key
 //        autoIncrement: true        Membuat id otomatis bertambah
     },
