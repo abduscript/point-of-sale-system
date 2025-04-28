@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/auth', getUserData);
 
 // ROUTE UNTUK SIGN UP
-router.post('/signup', signUp, (req, res) => {
+router.post('/auth/signup', signUp, (req, res) => {
     // Logic untuk sign-up
     res.json({ message: 'User registered successfully' });
 });

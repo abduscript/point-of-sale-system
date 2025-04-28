@@ -1,35 +1,73 @@
 // import React, { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import { registerUser } from '../services/auth';
+// import {
+//     MDBBtn,
+//     MDBContainer,
+//     MDBCard,
+//     MDBCardBody,
+//     MDBCardImage,
+//     MDBRow,
+//     MDBCol,
+//     MDBInput,
+//     MDBCheckbox
+// } from 'mdb-react-ui-kit';
 
 // const SignUp = () => {
-//     const [formData, setFormData] = useState({ username: '', email: '', password: '' , role: 'user' });
+//     const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
 //     const navigate = useNavigate();
 
 //     const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
+//         const { name, value } = e.target;
+//         setFormData({ ...formData, [name]: value });
 //     };
 
 //     const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//         await registerUser(formData);
-//         localStorage.setItem('user', JSON.stringify(formData));
-//         navigate('/login');
-//     } catch (error) {
-//         console.error('Register Failed:', error.response.data.message);
-//     }
+//         e.preventDefault();
+//         try {
+//             await registerUser(formData);
+//             localStorage.setItem('user', JSON.stringify(formData));
+//             navigate('/login');
+//         } catch (error) {
+//             console.error('Register Failed:', error.response?.data?.message || 'An error occurred');
+//         }
 //     };
 
 //     return (
-//     <form onSubmit={handleSubmit}>
-//         <input name="username" placeholder="Username" onChange={handleChange} />
-//         <input name="email" type="email" placeholder="Email" onChange={handleChange} />
-//         <input name="password" type="password" placeholder="Password" onChange={handleChange} />
-//         <input name="role" type="text" placeholder="Sign up as" onChange={handleChange} />
-//         <button type="submit">Sign Up</button>
-//     </form>
+//         <>
+//             <MDBContainer className='my-5'>
+//             <MDBCard>
+
+//                 <MDBRow className='g-0 d-flex align-items-center'>
+
+//                 <MDBCol md='4'>
+//                     <MDBCardImage src='https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg' alt='phone' className='rounded-t-5 rounded-tr-lg-0' fluid />
+//                 </MDBCol>
+
+//                 <MDBCol md='8'>
+
+//                     <MDBCardBody>
+
+//                     <MDBInput wrapperClass='mb-3' label='Username' id='form1' type='text'/>
+//                     <MDBInput wrapperClass='mb-3' label='Email address' id='form1' type='email'/>
+//                     <MDBInput wrapperClass='mb-3' label='Password' id='form2' type='password'/>
+
+//                     <div className="d-flex justify-content-between mx-4 mb-4">
+//                         <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
+//                         <a href="!#">Forgot password?</a>
+//                     </div>
+
+//                     <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
+
+//                     </MDBCardBody>
+
+//                 </MDBCol>
+
+//                 </MDBRow>
+
+//             </MDBCard>
+//             </MDBContainer>
+//         </>
 //     );
 // };
 
@@ -37,9 +75,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../services/auth';
+import {
+    MDBBtn,
+    MDBContainer,
+    MDBCard,
+    MDBCardBody,
+    MDBCardImage,
+    MDBRow,
+    MDBCol,
+    MDBInput,
+    MDBCheckbox
+} from 'mdb-react-ui-kit';
 
 const SignUp = () => {
-    const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        role: 'user'
+    });
+
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -49,80 +105,74 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
-            await registerUser(formData);
-            localStorage.setItem('user', JSON.stringify(formData));
+            const response = await registerUser(formData);
+            localStorage.setItem('token', response.data.token);
             navigate('/login');
         } catch (error) {
-            console.error('Register Failed:', error.response?.data?.message || 'An error occurred');
+            setError(error.response?.data?.message || 'An error occurred');
         }
     };
 
     return (
-        <div className="w-100 min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 " >
-            <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Create an Account</h2>
-                <form onSubmit={handleSubmit} className="">
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Username</label>
-                        <br />
-                        <input
-                            name="username"
-                            type="text"
-                            placeholder="Enter your username"
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Email</label>
-                        <br  />
-                        <input
-                            name="email"
-                            type="email"
-                            placeholder="Enter your email"
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Password</label>
-                        <br />
-                        <input
-                            name="password"
-                            type="password"
-                            placeholder="Enter your password"
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-gray-700 font-medium mb-1">Role</label>
-                        <br />
-                        <select
-                            name="role"
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-black hover:bg-blue-600 text-white font-medium py-2 rounded-md transition duration-200 mt-3"
-                    >
-                        Sign Up
-                    </button>
-                </form>
-                <p className="text-center text-gray-600 mt-4">
-                    Already have an account?{' '}
-                    <a href="/login" className="text-blue-500 hover:underline">
-                        Log In
-                    </a>
-                </p>
-            </div>
-        </div>
+        <MDBContainer className="my-5">
+            <MDBCard>
+                <MDBRow className="g-0 d-flex align-items-center">
+                    <MDBCol md="4">
+                        <MDBCardImage src="https://mdbootstrap.com/img/new/ecommerce/vertical/004.jpg" alt="Signup" className="rounded-t-5 rounded-tr-lg-0" fluid />
+                    </MDBCol>
+
+                    <MDBCol md="8">
+                        <MDBCardBody>
+                            <form onSubmit={handleSubmit}>
+                                <MDBInput
+                                    wrapperClass="mb-3"
+                                    label="Username"
+                                    id="username"
+                                    type="text"
+                                    name="username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <MDBInput
+                                    wrapperClass="mb-3"
+                                    label="Email address"
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <MDBInput
+                                    wrapperClass="mb-3"
+                                    label="Password"
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+
+                                <div className="d-flex justify-content-between mx-4 mb-4">
+                                    <MDBCheckbox name="flexCheck" id="flexCheckDefault" label="Remember me" />
+                                    <a href="/forgot-password">Forgot password?</a>
+                                </div>
+
+                                {error && <p className="text-danger">{error}</p>}
+
+                                <MDBBtn type="submit" className="mb-4 w-100">
+                                    Sign Up
+                                </MDBBtn>
+                            </form>
+                        </MDBCardBody>
+                    </MDBCol>
+                </MDBRow>
+            </MDBCard>
+        </MDBContainer>
     );
 };
 

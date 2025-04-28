@@ -180,11 +180,11 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(ProductRoute);
-app.use(CategoryRoute);
+app.use("/api", ProductRoute);
+app.use("/api", CategoryRoute);
 app.use("/api", CartRoute);
-app.use(OrdersRoute);
-app.use(UpdateRoute);
+app.use("/api", OrdersRoute);
+app.use("/api", UpdateRoute);
 app.use("/api", AuthRoute);
 app.use("/api", SalesRoute);
 
